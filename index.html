@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Local index - HTTrack Website Copier</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #c8cce0;
+      --panel: #ccd0e8;
+      --panel-dark: #99a0c4;
+      --accent: #3344aa;
+      --black: #000;
+      --white: #fff;
+      --text: #1a1a2e;
+      --link: #2233cc;
+      --link-hover: #cc2200;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 100% 0%, rgba(180,185,220,0.7) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 0% 100%, rgba(150,160,210,0.5) 0%, transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      color: var(--text);
+      padding: 2rem 1rem;
+    }
+
+    /* Decorative swirl background — referencing the backblue.gif spiral aesthetic */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -10%;
+      right: -5%;
+      width: 55vw;
+      height: 85vh;
+      background: 
+        radial-gradient(ellipse 100% 80% at 70% 30%, rgba(150,155,200,0.45) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 90% at 80% 60%, rgba(130,140,195,0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 60% 50%, rgba(170,175,215,0.25) 0%, transparent 50%);
+      border-radius: 50% 30% 50% 30%;
+      pointer-events: none;
+      z-index: 0;
+      animation: swirlFloat 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes swirlFloat {
+      from { transform: rotate(-4deg) scale(1); opacity: 0.8; }
+      to   { transform: rotate(4deg) scale(1.05); opacity: 1; }
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 680px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---- Header bar ---- */
+    .header-bar {
+      background: var(--black);
+      color: var(--white);
+      padding: 10px 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-radius: 4px 4px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-bar .dot { 
+      width: 10px; height: 10px; border-radius: 50%;
+      display: inline-block;
+    }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+
+    /* ---- Main panel ---- */
+    .main-panel {
+      background-color: var(--panel);
+      border: 2px solid var(--black);
+      border-top: none;
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 220px; height: 180px;
+      background:
+        radial-gradient(ellipse 90% 70% at 80% 20%, rgba(153,160,200,0.5) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 90% 50%, rgba(140,150,190,0.35) 0%, transparent 60%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 1.8rem;
+      position: relative;
+    }
+
+    h1::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: var(--accent);
+      margin: 0.5rem auto 0;
+      border-radius: 2px;
+    }
+
+    /* ---- Sites table ---- */
+    .sites-table {
+      width: 100%;
+      border-collapse: collapse;
+      position: relative;
+    }
+
+    .site-row td {
+      padding: 0;
+      border: 2px solid var(--panel-dark);
+    }
+
+    .site-link-cell {
+      background: linear-gradient(90deg, var(--panel-dark) 0%, var(--panel) 100%);
+      padding: 14px 18px;
+      transition: background 0.2s;
+    }
+
+    .site-link-cell:hover {
+      background: linear-gradient(90deg, #b0b8d8 0%, var(--panel-dark) 100%);
+    }
+
+    .site-bullet {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 8px;
+      font-size: 1.1em;
+    }
+
+    .site-link {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .site-link:hover {
+      color: var(--link-hover);
+      border-bottom-color: var(--link-hover);
+    }
+
+    .spacer { height: 2.5rem; }
+
+    /* ---- Footer ---- */
+    .footer-bar {
+      background: var(--panel);
+      border: 2px solid var(--black);
+      border-top: 1px solid var(--panel-dark);
+      padding: 8px 16px;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .footer-bar small {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: #555;
+    }
+
+    /* ---- Status badge ---- */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34,50,160,0.08);
+      border: 1.5px solid var(--panel-dark);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+      width: fit-content;
+      margin: 0 auto 1.5rem;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #2ecc71;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    /* ---- Fade stripe (mimics fade.gif) ---- */
+    .fade-stripe {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--panel-dark), transparent);
+      margin: 1.5rem 0;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Header titlebar -->
+    <div class="header-bar">
+      <span class="dot dot-r"></span>
+      <span class="dot dot-y"></span>
+      <span class="dot dot-g"></span>
+      HTTrack Website Copier — Open Source Offline Browser
+    </div>
+
+    <!-- Main panel -->
+    <div class="main-panel">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        Mirror complete · 657 files written
+      </div>
+
+      <h1>Index of locally available sites</h1>
+
+      <table class="sites-table">
+        <tbody>
+          <tr class="site-row">
+            <td class="site-link-cell">
+              <span class="site-bullet">·</span>
+              <a class="site-link" href="https://www.ilovepdf.com" target="_blank" rel="noopener">
+                iLovePDF | Online PDF tools for PDF lovers
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="fade-stripe"></div>
+
+      <p style="text-align:right; font-family:'Space Mono',monospace; font-size:0.68rem; color:#777; font-style:italic;">
+        Mirror and index made by HTTrack Website Copier [XR&amp;CO'2008]
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-bar">
+      <small>© 2008 Xavier Roche &amp; other contributors — Web Design: Leto Kauler.</small>
+    </div>
+  </div>
+</body>
+</html>
