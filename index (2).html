@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Resume Builder | Yashwant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .canvas-area { background-color: #e2e8f0; height: calc(100vh - 64px); }
+        .resume-page { width: 794px; min-height: 1123px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); transform: scale(0.65); transform-origin: top center; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        const App = () => {
+            const [data, setData] = useState({
+                personal: { name: 'Yashwant', title: 'Senior Frontend Engineer', email: 'yash@example.com' },
+                template: 'modern'
+            });
+            const resumeRef = useRef();
+
+            const download = async () => {
+                const canvas = await html2canvas(resumeRef.current, { scale: 2 });
+                const pdf = new jspdf.jsPDF('p', 'mm', 'a4');
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 297);
+                pdf.save('resume.pdf');
+            };
+
+            return (
+                <div className="h-screen flex flex-col">
+                    <nav className="h-16 bg-white border-b px-8 flex items-center justify-between shadow-sm">
+                        <span className="font-black text-blue-600 italic text-xl">RESUME.PRO</span>
+                        <button onClick={download} className="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700">Download PDF</button>
+                    </nav>
+                    <div className="flex flex-1 overflow-hidden">
+                        <aside className="w-80 bg-white border-r p-6 overflow-y-auto">
+                            <h2 className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Editor</h2>
+                            <input className="w-full border p-2 rounded mb-4" value={data.personal.name} onChange={e => setData({...data, personal: {...data.personal, name: e.target.value}})} />
+                            <h2 className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Styles</h2>
+                            <div className="grid gap-2">
+                                {['modern', 'brutalist', 'dark'].map(t => (
+                                    <button key={t} onClick={() => setData({...data, template: t})} className={`p-3 rounded-lg border font-bold text-xs capitalize ${data.template === t ? 'border-blue-600 bg-blue-50 text-blue-600' : ''}`}>{t} Style</button>
+                                ))}
+                            </div>
+                        </aside>
+                        <main className="flex-1 canvas-area overflow-y-auto p-10 flex justify-center">
+                            <div ref={resumeRef} className="resume-page">
+                                {data.template === 'modern' && <div className="p-12 border-t-8 border-blue-600"><h1 className="text-5xl font-bold">{data.personal.name}</h1><p className="text-xl text-blue-600">{data.personal.title}</p></div>}
+                                {data.template === 'brutalist' && <div className="p-10 bg-yellow-400 h-full border-4 border-black font-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]"><h1 className="text-6xl uppercase">{data.personal.name}</h1></div>}
+                                {data.template === 'dark' && <div className="p-12 bg-slate-900 text-white h-full border-l-8 border-blue-500"><h1 className="text-5xl font-bold">{data.personal.name}</h1></div>}
+                            </div>
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
